@@ -77,21 +77,17 @@ export default function SidebarNav({
 
       {/* SPATIAL PLACEHOLDER to prevent content hiding behind fixed sidebar */}
       <div 
-        className={`flex-shrink-0 transition-all duration-300 ${
-          isOpen ? (isCollapsed ? 'lg:w-[72px]' : 'lg:w-64') : 'lg:w-0'
-        } ${!isOpen ? 'w-[72px]' : 'w-[72px] lg:hidden'}`} 
+        className={`hidden lg:block flex-shrink-0 transition-all duration-300 ${
+          isOpen ? (isCollapsed ? 'w-[72px]' : 'w-64') : 'w-0'
+        }`} 
       />
 
       {/* 2. MAIN RETRACTABLE SIDEBAR CONTAINER */}
       <aside
-        className={`fixed inset-y-0 left-0 z-45 bg-emerald-800 border-r-4 border-emerald-950 text-white flex flex-col justify-between transition-all duration-300 shadow-2xl lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-45 bg-emerald-800 text-white flex flex-col justify-between transition-all duration-300 shadow-2xl lg:shadow-none ${
           isOpen 
-            ? 'w-64 translate-x-0'
-            : 'w-[72px] translate-x-0'
-        } ${
-          isOpen 
-            ? (isCollapsed ? 'lg:w-[72px] lg:translate-x-0' : 'lg:w-64 lg:translate-x-0')
-            : 'lg:-translate-x-full lg:w-0 lg:border-r-0'
+            ? (isCollapsed ? 'w-64 lg:w-[72px] translate-x-0 border-r-4 border-emerald-950' : 'w-64 translate-x-0 border-r-4 border-emerald-950')
+            : '-translate-x-full w-0 overflow-hidden border-r-0'
         }`}
       >
         {/* UPPER PART */}
@@ -101,8 +97,8 @@ export default function SidebarNav({
             
             {/* Logo/Identity when expanded */}
             <div className={`items-center gap-2.5 px-1 animate-fadeIn ${
-              isOpen ? 'flex' : 'hidden'
-            } ${isOpen && !isCollapsed ? 'lg:flex' : 'lg:hidden'}`}>
+              isOpen ? (isCollapsed ? 'flex lg:hidden' : 'flex lg:flex') : 'hidden'
+            }`}>
               <div className="w-8 h-8 flex-shrink-0 bg-white text-emerald-850 rounded-lg flex items-center justify-center font-black text-md shadow-md">
                 T
               </div>
@@ -114,8 +110,8 @@ export default function SidebarNav({
 
             {/* Logo placeholder when collapsed */}
             <div className={`mx-auto w-8 h-8 bg-white text-emerald-850 rounded-lg items-center justify-center font-black text-sm shadow-md ${
-              !isOpen ? 'flex' : 'hidden'
-            } ${isOpen && isCollapsed ? 'lg:flex' : 'lg:hidden'}`}>
+              isOpen && isCollapsed ? 'hidden lg:flex' : 'hidden'
+            }`}>
               T
             </div>
 
@@ -144,8 +140,8 @@ export default function SidebarNav({
           <div className="px-1.5 flex justify-center">
             {/* COMPACT ROLE VIEW */}
             <div className={`flex-col items-center gap-2 py-2 ${
-              !isOpen ? 'flex' : 'hidden'
-            } ${isOpen && isCollapsed ? 'lg:flex' : 'lg:hidden'}`}>
+              isOpen && isCollapsed ? 'hidden lg:flex' : 'hidden'
+            }`}>
               <button
                 onClick={userRole === 'admin' ? onSwitchToViewer : onSwitchToAdmin}
                 className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all border shadow-xs cursor-pointer ${
@@ -161,8 +157,8 @@ export default function SidebarNav({
 
             {/* EXPANDED ROLE VIEW */}
             <div className={`w-full bg-emerald-900/55 p-2 rounded-xl border border-emerald-700/40 space-y-1.5 ${
-              isOpen ? 'block' : 'hidden'
-            } ${isOpen && !isCollapsed ? 'lg:block' : 'lg:hidden'}`}>
+              isOpen ? (isCollapsed ? 'block lg:hidden' : 'block lg:block') : 'hidden'
+            }`}>
               <span className="text-[9px] font-black uppercase text-emerald-300 tracking-wider block px-1.5 leading-none mb-1">
                 Peran & Akses:
               </span>
@@ -212,16 +208,16 @@ export default function SidebarNav({
                   <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
                   
                   <span className={`text-xs tracking-wide whitespace-nowrap ${
-                    isOpen ? 'block ml-3' : 'hidden ml-0'
-                  } ${isOpen && !isCollapsed ? 'lg:block lg:ml-3' : 'lg:hidden lg:ml-0'}`}>
+                    isOpen ? (isCollapsed ? 'block lg:hidden ml-3 lg:ml-0' : 'block ml-3') : 'hidden'
+                  }`}>
                     {tab.label}
                   </span>
                   
                   {/* Badge count for database records */}
                   {tab.id === 'database' && totalCount > 0 && (
                     <span className={`absolute bg-rose-600 text-white font-extrabold text-[8px] rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center border border-emerald-800 ${
-                      !isOpen ? 'top-1 right-2' : 'top-auto right-3'
-                    } ${isOpen && isCollapsed ? 'lg:top-1 lg:right-2' : 'lg:top-auto lg:right-3'}`}>
+                      isOpen && isCollapsed ? 'right-3 lg:top-1 lg:right-2' : 'right-3'
+                    }`}>
                       {totalCount}
                     </span>
                   )}
@@ -232,10 +228,10 @@ export default function SidebarNav({
         </div>
 
         {/* LOWER PART / FOOTER SECTION */}
-        <div className="p-3 border-t border-emerald-700/40 bg-emerald-900/30 overflow-hidden flex justify-center">
+        <div className="p-3 border-t border-emerald-700/40 bg-emerald-900/30 flex justify-center">
           <div className={`space-y-1.5 w-full animate-fadeIn ${
-            isOpen ? 'block' : 'hidden'
-          } ${isOpen && !isCollapsed ? 'lg:block' : 'lg:hidden'}`}>
+            isOpen ? (isCollapsed ? 'block lg:hidden' : 'block lg:block') : 'hidden'
+          }`}>
             <div className="flex items-center justify-between text-[10px] text-emerald-250 leading-tight">
               <span className="font-semibold">Sistem Status</span>
               <span className="font-mono text-[9px] bg-emerald-900/60 px-1.5 py-0.5 rounded border border-emerald-750/50">v1.2</span>
@@ -246,8 +242,8 @@ export default function SidebarNav({
           </div>
           
           <div className={`text-center text-[10px] font-mono text-emerald-300 font-bold ${
-            !isOpen ? 'block' : 'hidden'
-          } ${isOpen && isCollapsed ? 'lg:block' : 'lg:hidden'}`}>
+            isOpen && isCollapsed ? 'hidden lg:block' : 'hidden'
+          }`}>
             YMA
           </div>
         </div>
