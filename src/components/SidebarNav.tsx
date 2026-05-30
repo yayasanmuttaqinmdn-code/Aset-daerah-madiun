@@ -77,8 +77,8 @@ export default function SidebarNav({
 
       {/* SPATIAL PLACEHOLDER to prevent content hiding behind fixed sidebar */}
       <div 
-        className={`hidden lg:block flex-shrink-0 transition-all duration-300 ${
-          isOpen ? (isCollapsed ? 'w-[72px]' : 'w-64') : 'w-0'
+        className={`hidden flex-shrink-0 transition-all duration-300 ${
+          isOpen ? 'w-64 lg:block' : 'w-0'
         }`} 
       />
 
@@ -86,7 +86,7 @@ export default function SidebarNav({
       <aside
         className={`fixed inset-y-0 left-0 z-45 bg-emerald-800 text-white flex flex-col justify-between transition-all duration-300 shadow-2xl lg:shadow-none ${
           isOpen 
-            ? (isCollapsed ? 'w-64 lg:w-[72px] translate-x-0 border-r-4 border-emerald-950' : 'w-64 translate-x-0 border-r-4 border-emerald-950')
+            ? 'w-64 translate-x-0 border-r-4 border-emerald-950'
             : '-translate-x-full w-0 overflow-hidden border-r-0'
         }`}
       >
@@ -118,21 +118,11 @@ export default function SidebarNav({
             {/* Mobile close button (X) */}
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden p-1.5 hover:bg-emerald-700 rounded-lg text-emerald-200 hover:text-white transition-all cursor-pointer absolute right-3"
+              className="p-1.5 hover:bg-emerald-700 rounded-lg text-emerald-200 hover:text-white transition-all cursor-pointer absolute right-3"
               style={{ display: isOpen ? 'block' : 'none' }}
+              title="Tutup Menu"
             >
               <X className="w-4 h-4" />
-            </button>
-
-            {/* Desktop collapse chevron button */}
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className={`hidden lg:flex p-1 hover:bg-emerald-700 border border-emerald-700/50 rounded-md text-emerald-250 hover:text-white transition-all cursor-pointer ${
-                isCollapsed ? 'mx-auto' : ''
-              }`}
-              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             </button>
           </div>
 

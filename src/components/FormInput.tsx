@@ -210,6 +210,11 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
         namaPemilikBaru: editingAsset?.type === 'tanah' ? editingAsset.namaPemilikBaru : undefined,
         catatanBalikNama: editingAsset?.type === 'tanah' ? editingAsset.catatanBalikNama : undefined,
         tanggalMulaiBalikNama: editingAsset?.type === 'tanah' ? editingAsset.tanggalMulaiBalikNama : undefined,
+        progresBalikNama: editingAsset?.type === 'tanah' ? editingAsset.progresBalikNama : undefined,
+        riwayatBalikNama: editingAsset?.type === 'tanah' ? editingAsset.riwayatBalikNama : undefined,
+        sedangDipinjam: editingAsset?.type === 'tanah' ? editingAsset.sedangDipinjam : undefined,
+        peminjamanAktif: editingAsset?.type === 'tanah' ? editingAsset.peminjamanAktif : undefined,
+        riwayatPeminjaman: editingAsset?.type === 'tanah' ? editingAsset.riwayatPeminjaman : undefined,
       };
     } else if (activeType === 'kendaraan') {
       if (!nomorPolisi || !merk || !atasNama || !penanggungJawabDaerah) {
@@ -232,6 +237,11 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
         namaPemilikBaru: editingAsset?.type === 'kendaraan' ? editingAsset.namaPemilikBaru : undefined,
         catatanBalikNama: editingAsset?.type === 'kendaraan' ? editingAsset.catatanBalikNama : undefined,
         tanggalMulaiBalikNama: editingAsset?.type === 'kendaraan' ? editingAsset.tanggalMulaiBalikNama : undefined,
+        progresBalikNama: editingAsset?.type === 'kendaraan' ? editingAsset.progresBalikNama : undefined,
+        riwayatBalikNama: editingAsset?.type === 'kendaraan' ? editingAsset.riwayatBalikNama : undefined,
+        sedangDipinjam: editingAsset?.type === 'kendaraan' ? editingAsset.sedangDipinjam : undefined,
+        peminjamanAktif: editingAsset?.type === 'kendaraan' ? editingAsset.peminjamanAktif : undefined,
+        riwayatPeminjaman: editingAsset?.type === 'kendaraan' ? editingAsset.riwayatPeminjaman : undefined,
       };
     } else {
       // bangunan
@@ -260,6 +270,11 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
         namaPemilikBaru: editingAsset?.type === 'bangunan' ? editingAsset.namaPemilikBaru : undefined,
         catatanBalikNama: editingAsset?.type === 'bangunan' ? editingAsset.catatanBalikNama : undefined,
         tanggalMulaiBalikNama: editingAsset?.type === 'bangunan' ? editingAsset.tanggalMulaiBalikNama : undefined,
+        progresBalikNama: editingAsset?.type === 'bangunan' ? editingAsset.progresBalikNama : undefined,
+        riwayatBalikNama: editingAsset?.type === 'bangunan' ? editingAsset.riwayatBalikNama : undefined,
+        sedangDipinjam: editingAsset?.type === 'bangunan' ? editingAsset.sedangDipinjam : undefined,
+        peminjamanAktif: editingAsset?.type === 'bangunan' ? editingAsset.peminjamanAktif : undefined,
+        riwayatPeminjaman: editingAsset?.type === 'bangunan' ? editingAsset.riwayatPeminjaman : undefined,
       };
     }
 

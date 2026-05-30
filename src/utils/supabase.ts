@@ -140,6 +140,9 @@ export const saveAssetSupabase = async (asset: Asset): Promise<void> => {
   const { error } = await supabase.from('assets').upsert([dbRow]);
   if (error) {
     console.error('Error saving asset to Supabase:', error);
+    if (error.message?.includes('progres_balik_nama')) {
+      throw new Error("Update Struktur Database Diperlukan: Anda harus menambahkan kolom 'progres_balik_nama' dengan tipe 'JSONB' pada tabel 'assets' di dashboard Supabase Anda agar fitur ini bisa disimpan secara permanen.");
+    }
     throw error;
   }
 };

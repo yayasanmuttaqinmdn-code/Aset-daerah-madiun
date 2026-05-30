@@ -164,7 +164,7 @@ export default function App() {
       setGoogleToken(null);
       setSheetsConnected(false);
       setSheetsError(null);
-      loadAssets(null);
+      loadAssets();
     };
     doForceDisconnect();
   }, []);
@@ -182,7 +182,7 @@ export default function App() {
       setSheetsConnected(false);
       setSheetsError(null);
       showToast('Sambungan Google Sheets dinonaktifkan.');
-      loadAssets(null);
+      loadAssets();
     } catch (err) {
       console.error('Logout error:', err);
     }
@@ -214,9 +214,10 @@ export default function App() {
       await saveAssetSupabase(savedAsset);
       setSyncStatus('synced');
       showToast(isNew ? 'Aset berhasil didaftarkan ke server!' : 'Perubahan aset berhasil disimpan!');
-    } catch (e) {
+    } catch (e: any) {
       setSyncStatus('offline');
-      showToast('Gagal menyimpan ke server (Koneksi offline).');
+      console.error('Save error:', e);
+      showToast(`Gagal menyimpan: ${e?.message || 'Koneksi offline / Error'}`);
     }
 
     if (editingAsset) {
@@ -235,9 +236,10 @@ export default function App() {
       await deleteAssetSupabase(id);
       setSyncStatus('synced');
       showToast('Aset berhasil dihapus dari database.');
-    } catch (e) {
+    } catch (e: any) {
       setSyncStatus('offline');
-      showToast('Gagal menghapus aset (Koneksi offline).');
+      console.error('Delete error:', e);
+      showToast(`Gagal menghapus aset: ${e?.message || 'Error'}`);
     }
   };
 
