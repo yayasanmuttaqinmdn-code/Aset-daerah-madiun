@@ -95,7 +95,7 @@ export default function SidebarNav({
         }`}
       >
         {/* UPPER PART */}
-        <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden pt-4 px-3 space-y-5">
+        <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden pt-4 px-3 space-y-5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {/* Header & Close/Collapse controls */}
           <div className="flex items-center justify-between pb-3 border-b border-emerald-700/60 min-h-[50px]">
             
