@@ -139,25 +139,7 @@ export default function Dashboard({
         </div>
       </motion.div>
 
-      {/* Last Update & Sync Status */}
-      <div className="w-full">
-        <div className="bg-emerald-50 p-4.5 rounded-2xl border-2 border-emerald-100 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5">
-              <p className="text-[11px] font-black text-emerald-800 uppercase tracking-wider">Status Database Inventaris</p>
-              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">Sistem Mandiri</span>
-            </div>
-            <p className="text-xs text-emerald-950 font-bold">Sistem Berjalan Aman &amp; Terlindungi (Offline-Ready)</p>
-            <p className="text-[10.5px] text-emerald-800/85 leading-relaxed max-w-2xl">
-              Seluruh data inventarisasi secara otomatis tersimpan dan dicadangkan dengan aman di server internal daerah serta penyimpanan lokal perangkat Anda.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-widest">Datastore Aktif</span>
-          </div>
-        </div>
-      </div>
+
 
       {/* Stats Bento Grid */}
       <div className="grid grid-cols-3 gap-3">

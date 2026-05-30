@@ -130,83 +130,30 @@ export default function App() {
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
 
   // Helper to safely save backup to LocalStorage without heavy base64 image strings
-  const saveLocalBackup = (list: Asset[]) => {
-    try {
-      const sanitized = list.map(originalAsset => {
-        const asset = { ...originalAsset };
-        if (asset.peminjamanAktif) {
-          asset.peminjamanAktif = {
-            ...asset.peminjamanAktif,
-            fotoPinjam: undefined,
-            fotoKembali: undefined,
-          };
-        }
-        if (asset.riwayatPeminjaman) {
-          asset.riwayatPeminjaman = asset.riwayatPeminjaman.map(record => ({
-            ...record,
-            fotoPinjam: undefined,
-            fotoKembali: undefined,
-          }));
-        }
-        return asset;
-      });
-      localStorage.setItem('madiun_assets_backup', JSON.stringify(sanitized));
-    } catch (err) {
-      console.warn('Gagal menyimpan cadangan lokal (Quota localStorage penuh):', err);
-    }
-  };
-
-  const loadAssets = async (gToken?: string | null) => {
+  const loadAssets = async () => {
     setSyncStatus('pending');
     let serverData: Asset[] = [];
-    let localData: Asset[] = [];
 
-    const effectiveToken = gToken !== undefined ? gToken : googleToken;
-
-    // 1. Try to fetch from server
+    // 1. Fetch from server
     try {
       serverData = await fetchAssetsSupabase();
-    } catch (err) {
-      console.warn('Server unreachable, running in local fallback mode', err);
-      setSyncStatus('offline');
-    }
-
-    // 2. Read from LocalStorage backup
-    try {
-      const storedStr = localStorage.getItem('madiun_assets_backup');
-      if (storedStr) {
-        localData = JSON.parse(storedStr);
-      }
-    } catch (err) {
-      console.error('LocalStorage parse error:', err);
-    }
-
-    // 3. Resilient Merge: Merge both, prioritizing server in conflict but keeping unique IDs from both sides
-    const mergedMap = new Map<string, Asset>();
-    localData.forEach(asset => mergedMap.set(asset.id, asset));
-    serverData.forEach(asset => mergedMap.set(asset.id, asset));
-
-    const mergedList = Array.from(mergedMap.values());
-    setAssets(mergedList);
-
-    // Save the merged copy locally for offline access (sanitized from heavy photo assets)
-    saveLocalBackup(mergedList);
-
-    // Synchronize back to server if server was missing some of the local data (self-healing db)
-    if (serverData.length < mergedList.length) {
-      try {
-        await syncAssetsSupabase(mergedList);
-        setSyncStatus('synced');
-      } catch (e) {
-        console.warn('Unable to sync merged copy back.');
-      }
-    } else {
+      setAssets(serverData || []);
       setSyncStatus('synced');
+    } catch (err) {
+      console.error('Failed to load assets from Supabase', err);
+      setSyncStatus('offline');
     }
   };
 
   // Synchronize Google Auth on mount (Forced Disconnect of Google Sheets as requested)
   useEffect(() => {
+    // Clear legacy local backups
+    try {
+      localStorage.removeItem('madiun_assets_backup');
+    } catch (e) {
+      // Ignore
+    }
+
     const doForceDisconnect = async () => {
       try {
         await logout();
@@ -248,7 +195,7 @@ export default function App() {
     }, 3500);
   };
 
-  // Keep LocalStorage and server matched on save operations
+  // Keep server and state matched on save operations
   const handleSaveAsset = async (savedAsset: Asset) => {
     setSyncStatus('pending');
 
@@ -262,7 +209,6 @@ export default function App() {
     }
     
     setAssets(updatedList);
-    saveLocalBackup(updatedList);
 
     try {
       await saveAssetSupabase(savedAsset);
@@ -270,7 +216,7 @@ export default function App() {
       showToast(isNew ? 'Aset berhasil didaftarkan ke server!' : 'Perubahan aset berhasil disimpan!');
     } catch (e) {
       setSyncStatus('offline');
-      showToast('Aset disimpan secara lokal (Koneksi offline).');
+      showToast('Gagal menyimpan ke server (Koneksi offline).');
     }
 
     if (editingAsset) {
@@ -284,7 +230,6 @@ export default function App() {
     setSyncStatus('pending');
     const updatedList = assets.filter(a => a.id !== id);
     setAssets(updatedList);
-    saveLocalBackup(updatedList);
 
     try {
       await deleteAssetSupabase(id);
@@ -292,7 +237,7 @@ export default function App() {
       showToast('Aset berhasil dihapus dari database.');
     } catch (e) {
       setSyncStatus('offline');
-      showToast('Aset terhapus secara lokal.');
+      showToast('Gagal menghapus aset (Koneksi offline).');
     }
   };
 
@@ -307,7 +252,6 @@ export default function App() {
 
     const unifiedList = Array.from(mergedMap.values());
     setAssets(unifiedList);
-    saveLocalBackup(unifiedList);
 
     syncAssetsSupabase(unifiedList)
       .then(() => {
@@ -316,7 +260,7 @@ export default function App() {
       })
       .catch(() => {
         setSyncStatus('offline');
-        showToast('Data disimpan secara lokal (Koneksi offline).');
+        showToast('Gagal menyimpan ke server (Koneksi offline).');
       });
 
     return true;
@@ -329,13 +273,12 @@ export default function App() {
     try {
       await syncAssetsSupabase(newList);
       setAssets(newList);
-      saveLocalBackup(newList);
       showToast('Data berhasil disinkronisasi ke server!');
       setSyncStatus('synced');
     } catch (err) {
       console.error('Failed to sync to server:', err);
       setSyncStatus('offline');
-      showToast('Offline, data disimpan di perangkat.');
+      showToast('Gagal terhubung ke server.');
     }
   };
 
@@ -345,9 +288,8 @@ export default function App() {
     try {
       await syncAssetsSupabase(assets);
       const updatedFromServer = await fetchAssetsSupabase();
-      if (updatedFromServer.length > 0) {
+      if (updatedFromServer && updatedFromServer.length > 0) {
         setAssets(updatedFromServer);
-        saveLocalBackup(updatedFromServer);
       }
       setSyncStatus('synced');
       showToast('Sinkronisasi data sukses!');

@@ -2,6 +2,13 @@ export type AssetType = 'tanah' | 'kendaraan' | 'bangunan';
 
 export type SertifikatTanahType = 'SHM' | 'WAQAF' | 'SHGB' | 'LETER C';
 
+export interface ProgresBalikNama {
+  id: string;
+  tanggal: string;
+  keterangan: string;
+  biaya: number;
+}
+
 export interface RiwayatBalikNama {
   tanggalSelesai: string;
   atasNamaLama: string;
@@ -40,6 +47,7 @@ export interface AsetTanah {
   namaPemilikBaru?: string;
   catatanBalikNama?: string;
   tanggalMulaiBalikNama?: string;
+  progresBalikNama?: ProgresBalikNama[];
   riwayatBalikNama?: RiwayatBalikNama[];
   sedangDipinjam?: boolean;
   peminjamanAktif?: PeminjamanBerkas;
@@ -66,6 +74,7 @@ export interface AsetKendaraan {
   namaPemilikBaru?: string;
   catatanBalikNama?: string;
   tanggalMulaiBalikNama?: string;
+  progresBalikNama?: ProgresBalikNama[];
   riwayatBalikNama?: RiwayatBalikNama[];
   sedangDipinjam?: boolean;
   peminjamanAktif?: PeminjamanBerkas;
@@ -134,6 +143,7 @@ export interface AsetBangunan {
   namaPemilikBaru?: string;
   catatanBalikNama?: string;
   tanggalMulaiBalikNama?: string;
+  progresBalikNama?: ProgresBalikNama[];
   riwayatBalikNama?: RiwayatBalikNama[];
   sedangDipinjam?: boolean;
   peminjamanAktif?: PeminjamanBerkas;

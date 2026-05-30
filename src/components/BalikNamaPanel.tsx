@@ -39,6 +39,10 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
   const [draftTanggal, setDraftTanggal] = useState('');
   const [draftCatatan, setDraftCatatan] = useState('');
   const [newSertifikatNo, setNewSertifikatNo] = useState('');
+  const [draftProgressList, setDraftProgressList] = useState<any[]>([]);
+  const [draftProgressKeterangan, setDraftProgressKeterangan] = useState('');
+  const [draftProgressTanggal, setDraftProgressTanggal] = useState('');
+  const [draftProgressBiaya, setDraftProgressBiaya] = useState('');
 
   const [activeSubTab, setActiveSubTab] = useState<'progress' | 'completed'>('progress');
 
@@ -114,6 +118,28 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
     setDraftNamaBaru(asset.namaPemilikBaru || '');
     setDraftTanggal(asset.tanggalMulaiBalikNama || new Date().toISOString().split('T')[0]);
     setDraftCatatan(asset.catatanBalikNama || '');
+    setDraftProgressList(asset.progresBalikNama || []);
+    setDraftProgressTanggal(new Date().toISOString().split('T')[0]);
+    setDraftProgressKeterangan('');
+    setDraftProgressBiaya('');
+  };
+
+  const handleAddProgress = () => {
+    if (!draftProgressKeterangan || !draftProgressTanggal) return;
+    const newItem = {
+      id: crypto.randomUUID(),
+      tanggal: draftProgressTanggal,
+      keterangan: draftProgressKeterangan,
+      biaya: Number(draftProgressBiaya) || 0
+    };
+    setDraftProgressList([...draftProgressList, newItem]);
+    setDraftProgressKeterangan('');
+    setDraftProgressBiaya('');
+    setDraftProgressTanggal(new Date().toISOString().split('T')[0]);
+  };
+
+  const handleDeleteProgress = (id: string) => {
+    setDraftProgressList(draftProgressList.filter(p => p.id !== id));
   };
 
   const handleSaveDraft = (asset: Asset) => {
@@ -122,6 +148,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
       namaPemilikBaru: draftNamaBaru,
       tanggalMulaiBalikNama: draftTanggal,
       catatanBalikNama: draftCatatan,
+      progresBalikNama: draftProgressList,
     };
     onSaveAsset(updatedAsset);
     setEditingCardId(null);
@@ -602,13 +629,44 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
                         {asset.tanggalMulaiBalikNama ? new Date(asset.tanggalMulaiBalikNama).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'}) : '-'}
                       </span>
                     </div>
+                    
                     <div className="flex items-start gap-2 text-slate-600">
                       <Clock className="w-3.5 h-3.5 shrink-0 text-slate-400 mt-0.5" />
-                      <div className="space-y-0.5">
-                        <span className="font-semibold text-[11px] block text-slate-600">Progres / Rekam Catatan:</span>
+                      <div className="space-y-2 flex-1">
+                        <span className="font-semibold text-[11px] block text-slate-600">Catatan Info Utama:</span>
                         <p className="text-[11px] text-slate-600 leading-relaxed font-sans bg-amber-50/40 p-2.5 rounded-lg border border-amber-100/70">
                           {asset.catatanBalikNama || 'Menunggu pembaruan catatan administrasi...'}
                         </p>
+
+                        {/* List of Progres Balik Nama Detailed logs */}
+                        {asset.progresBalikNama && asset.progresBalikNama.length > 0 && (
+                          <div className="mt-3 space-y-1.5">
+                            <span className="font-semibold text-[10px] uppercase text-slate-500 block mb-1 tracking-wider">Log Progres & Biaya:</span>
+                            {asset.progresBalikNama.map((prog, i) => (
+                              <div key={prog.id} className="bg-slate-50 border border-slate-200 rounded-lg p-2 text-[10px] text-slate-700 flex justify-between gap-1 items-start">
+                                <div className="space-y-0.5 min-w-0 flex-1">
+                                  <span className="font-mono font-bold text-[9px] text-slate-500">{new Date(prog.tanggal).toLocaleDateString('id-ID')}</span>
+                                  <p className="font-medium text-slate-800 leading-relaxed break-words pr-2">{prog.keterangan}</p>
+                                </div>
+                                {prog.biaya > 0 && (
+                                  <div className="shrink-0 text-right">
+                                    <span className="inline-block bg-rose-50 text-rose-700 border border-rose-100 rounded px-1.5 py-0.5 font-bold font-mono whitespace-nowrap">
+                                      Rp {prog.biaya.toLocaleString('id-ID')}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            {asset.progresBalikNama.length > 0 && (
+                              <div className="flex justify-between items-center text-[10px] font-bold text-slate-600 px-1 pt-1">
+                                <span>Total Biaya:</span>
+                                <span className="text-rose-700 font-black">
+                                  Rp {asset.progresBalikNama.reduce((sum, p) => sum + (p.biaya || 0), 0).toLocaleString('id-ID')}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -654,15 +712,86 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-black text-slate-600">Catatan & Progres Langkah Administrasi</label>
+                          <label className="text-[10px] font-black text-slate-600">Catatan Info Utama</label>
                           <textarea 
                             rows={2}
                             value={draftCatatan}
                             onChange={(e) => setDraftCatatan(e.target.value)}
-                            placeholder="Contoh: Berkas sudah diserahkan ke BPN Kabupaten."
+                            placeholder="Contoh: Proses pengajuan ke BPN Kabupaten."
                             className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:bg-white leading-relaxed font-sans"
                           />
                         </div>
+
+                        {/* Add Progress and Cost Detail */}
+                        <div className="space-y-2 border-t border-slate-100 pt-3">
+                          <label className="text-[10px] font-black text-slate-600 flex justify-between">
+                            <span>Detail Log Progres & Biaya Tambahan</span>
+                          </label>
+                          
+                          {draftProgressList.length > 0 && (
+                            <div className="space-y-1 mb-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                              {draftProgressList.map((prog) => (
+                                <div key={prog.id} className="flex items-center justify-between gap-2 bg-white px-2 py-1.5 rounded border border-slate-100 text-[10px]">
+                                  <div className="flex-1 min-w-0 flex flex-col">
+                                    <span className="font-mono text-slate-500 font-bold text-[9px]">{new Date(prog.tanggal).toLocaleDateString('id-ID')}</span>
+                                    <span className="truncate text-slate-800 font-medium">{prog.keterangan}</span>
+                                  </div>
+                                  {prog.biaya > 0 && (
+                                    <span className="shrink-0 text-slate-600 font-mono font-bold">
+                                      Rp {prog.biaya.toLocaleString('id-ID')}
+                                    </span>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteProgress(prog.id)}
+                                    className="p-1 hover:bg-rose-50 text-rose-500 rounded text-xs cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 space-y-2">
+                            <div className="grid grid-cols-2 gap-2">
+                              <input 
+                                type="date" 
+                                value={draftProgressTanggal}
+                                onChange={(e) => setDraftProgressTanggal(e.target.value)}
+                                className="w-full bg-white border border-slate-200 rounded p-2 text-xs focus:outline-none h-8 font-mono"
+                              />
+                              <div className="relative">
+                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">Rp</span>
+                                <input 
+                                  type="number" 
+                                  placeholder="Biaya (Opsional)"
+                                  value={draftProgressBiaya}
+                                  onChange={(e) => setDraftProgressBiaya(e.target.value)}
+                                  className="w-full bg-white border border-slate-200 rounded p-2 pl-7 text-xs focus:outline-none h-8 font-mono"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <input 
+                                type="text"
+                                placeholder="Keterangan progres (Cth: Bayar Notaris)"
+                                value={draftProgressKeterangan}
+                                onChange={(e) => setDraftProgressKeterangan(e.target.value)}
+                                className="flex-1 bg-white border border-slate-200 rounded p-2 text-xs focus:outline-none h-8 font-sans"
+                              />
+                              <button 
+                                type="button" 
+                                onClick={handleAddProgress}
+                                disabled={!draftProgressKeterangan || !draftProgressTanggal}
+                                className="px-3 shrink-0 bg-blue-100 hover:bg-blue-200 text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-[10px] font-black flex items-center gap-1 cursor-pointer"
+                              >
+                                <PlusCircle className="w-3.5 h-3.5" /> Tambah
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
 
                       {/* Submit Actions */}
