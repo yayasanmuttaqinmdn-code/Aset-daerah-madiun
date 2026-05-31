@@ -221,7 +221,7 @@ export default function Dashboard({
             />
           </div>
           <p className="text-[10px] text-slate-500 font-medium leading-relaxed font-sans mt-1">
-            Sebanyak <strong className="text-emerald-800 font-extrabold">{yayasanLandAssets.length} dari {tanahCount} aset tanah</strong> yang tercatat di sistem ini telah resmi selesai balik nama atas nama <span className="underline decoration-emerald-300 font-bold text-slate-700">YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN</span>.
+            Sebanyak <strong className="text-emerald-800 font-extrabold">{yayasanLandAssets.length} dari {tanahCount} aset tanah</strong> yang tercatat di sistem ini telah resmi selesai balik nama atas nama <span className="underline decoration-emerald-300 font-bold text-slate-700">YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN</span>.
           </p>
         </div>
       </div>

@@ -61,6 +61,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
 
     const normalizedOwnerName = (currentOwnerName || '').trim().toUpperCase();
     return (
+      normalizedOwnerName === 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN' || 
       normalizedOwnerName === 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN' || 
       normalizedOwnerName.includes('MUTTAQIN JOSENAN') ||
       normalizedOwnerName.includes('MUTTAQIN')
@@ -79,6 +80,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
 
     const normalizedOwnerName = (currentOwnerName || '').trim().toUpperCase();
     if (
+      normalizedOwnerName === 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN' || 
       normalizedOwnerName === 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN' || 
       normalizedOwnerName.includes('MUTTAQIN JOSENAN')
     ) {
@@ -159,7 +161,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
     const updatedAsset: Asset = {
       ...asset,
       sedangBalikNama: true,
-      namaPemilikBaru: asset.namaPemilikBaru || 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN',
+      namaPemilikBaru: asset.namaPemilikBaru || 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN',
       tanggalMulaiBalikNama: asset.tanggalMulaiBalikNama || new Date().toISOString().split('T')[0],
       catatanBalikNama: asset.catatanBalikNama || 'Berkas mulai dihimpun oleh tim sekretariat.',
     };
@@ -179,7 +181,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
 
   const handleCompleteProcess = (asset: Asset, finalCertNo: string) => {
     if (userRole !== 'admin') return;
-    const finalOwnerName = 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN';
+    const finalOwnerName = 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN';
     
     // Extract prior states for audit trail
     const atasNamaLama = (asset.type === 'tanah' ? asset.atasNamaSertifikat : asset.type === 'kendaraan' ? asset.atasNama : 'Gedung/Bangunan') || '-';
@@ -474,7 +476,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
                     <div className="min-w-0">
                       <span className="block text-[8px] text-emerald-600 font-extrabold uppercase tracking-wider">Pemilik Resmi Terdaftar</span>
                       <span className="text-[11px] font-black text-emerald-950 block truncate">
-                        YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN
+                        YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN
                       </span>
                     </div>
                   </div>
@@ -729,7 +731,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
                           <div className="space-y-1 flex flex-col justify-end">
                             <button
                               type="button"
-                              onClick={() => setDraftNamaBaru('YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN')}
+                              onClick={() => setDraftNamaBaru('YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN')}
                               className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-black py-2.5 rounded-lg border border-slate-200 h-10 transition-colors cursor-pointer"
                             >
                               Set PP Muttaqin
@@ -844,7 +846,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
                       {confirmingCompleteId === asset.id ? (
                         <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3.5 space-y-3">
                           <p className="text-[10px] font-black text-emerald-900 leading-relaxed uppercase tracking-wider">
-                            ⚠️ Selesaikan Balik Nama? Nama pemilik aset secara resmi akan diubah menjadi <strong className="underline text-emerald-950 font-black">"YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN"</strong>.
+                            ⚠️ Selesaikan Balik Nama? Nama pemilik aset secara resmi akan diubah menjadi <strong className="underline text-emerald-950 font-black">"YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN"</strong>.
                           </p>
 
                           {/* Dynamic Certificate No input field */}
