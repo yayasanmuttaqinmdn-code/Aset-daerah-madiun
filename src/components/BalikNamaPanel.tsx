@@ -191,7 +191,8 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
       atasNamaLama,
       nomerSertifikatLama,
       catatanLama: asset.catatanBalikNama || '',
-      nomorSertifikatBaru: finalCertNo
+      nomorSertifikatBaru: finalCertNo,
+      progresDetail: asset.progresBalikNama || []
     };
 
     const priorHistory = asset.riwayatBalikNama || [];
@@ -204,6 +205,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
         atasNamaSertifikat: finalOwnerName,
         nomerSertifikat: finalCertNo,
         sedangBalikNama: false,
+        progresBalikNama: [],
         catatanBalikNama: `Selesai balik nama ke ${finalOwnerName} pada ${new Date().toLocaleDateString('id-ID')}. Nomor Sertifikat baru: ${finalCertNo}.`,
         riwayatBalikNama: updatedHistory
       };
@@ -213,6 +215,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
         atasNama: finalOwnerName,
         nomorPolisi: finalCertNo,
         sedangBalikNama: false,
+        progresBalikNama: [],
         catatanBalikNama: `Selesai balik nama ke ${finalOwnerName} pada ${new Date().toLocaleDateString('id-ID')}. Nomor Polisi/Surat baru: ${finalCertNo}.`,
         riwayatBalikNama: updatedHistory
       };
@@ -221,6 +224,7 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
         ...asset,
         nomerPBG: finalCertNo,
         sedangBalikNama: false,
+        progresBalikNama: [],
         catatanBalikNama: `Selesai balik nama ke ${finalOwnerName} pada ${new Date().toLocaleDateString('id-ID')}. Nomor PBG baru: ${finalCertNo}.`,
         riwayatBalikNama: updatedHistory
       };
@@ -527,6 +531,28 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
                               </div>
                               {r.catatanLama && (
                                 <p className="text-[9px] text-slate-400 leading-normal italic mt-1 border-l border-slate-300 pl-1.5">{r.catatanLama}</p>
+                              )}
+                              
+                              {r.progresDetail && r.progresDetail.length > 0 && (
+                                <div className="mt-2 space-y-1">
+                                  <span className="font-semibold text-[9px] uppercase text-slate-400 block mb-1 tracking-wider border-t border-dashed border-slate-200 pt-1">Log Histori Progres & Biaya:</span>
+                                  {r.progresDetail.map((prog, k) => (
+                                    <div key={k} className="bg-white border text-[9px] text-slate-600 flex justify-between gap-1 items-start p-1.5 rounded">
+                                      <div className="space-y-0.5 min-w-0 flex-1">
+                                        <span className="font-mono font-bold text-slate-400">{new Date(prog.tanggal).toLocaleDateString('id-ID')}</span>
+                                        <p className="leading-relaxed truncate pr-2">{prog.keterangan}</p>
+                                      </div>
+                                      {prog.biaya > 0 && (
+                                        <div className="shrink-0 text-right font-mono font-bold text-slate-400">
+                                          Rp {prog.biaya.toLocaleString('id-ID')}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                  <div className="text-right text-[9px] font-bold text-slate-500 pt-1 pr-1">
+                                    Total Biaya: <span className="text-slate-700">Rp {r.progresDetail.reduce((sum, p) => sum + (p.biaya || 0), 0).toLocaleString('id-ID')}</span>
+                                  </div>
+                                </div>
                               )}
                             </div>
                           ))}

@@ -15,6 +15,7 @@ export interface RiwayatBalikNama {
   nomerSertifikatLama: string;
   catatanLama?: string;
   nomorSertifikatBaru: string;
+  progresDetail?: ProgresBalikNama[];
 }
 
 export interface PeminjamanBerkas {
