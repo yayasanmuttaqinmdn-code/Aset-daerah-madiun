@@ -531,6 +531,7 @@ export default function App() {
                 onSaveAsset={handleSaveAsset} 
                 editingAsset={editingAsset}
                 userRole={userRole}
+                assets={assets}
                 onCancelEdit={() => {
                   setEditingAsset(null);
                   setCurrentTab('database');

@@ -26,9 +26,10 @@ interface FormInputProps {
   editingAsset?: Asset | null;
   onCancelEdit?: () => void;
   userRole?: 'admin' | 'viewer';
+  assets?: Asset[];
 }
 
-export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, userRole = 'admin' }: FormInputProps) {
+export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, userRole = 'admin', assets = [] }: FormInputProps) {
   const [activeType, setActiveType] = useState<AssetType>('tanah');
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
@@ -180,6 +181,28 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (activeType === 'tanah' && nomerSertifikat) {
+      const exists = assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase() === nomerSertifikat.toLowerCase() && a.id !== editingAsset?.id);
+      if (exists) {
+        alert('Nomor Hak / Sertifikat sudah terdaftar. Data tidak boleh ganda.');
+        return;
+      }
+    } else if (activeType === 'kendaraan' && nomorPolisi) {
+      const exists = assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase() === nomorPolisi.toLowerCase() && a.id !== editingAsset?.id);
+      if (exists) {
+        alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
+        return;
+      }
+    } else if (activeType === 'bangunan') {
+      if (nomerPBG && nomerPBG !== '-') {
+        const existsPBG = assets.some(a => a.type === 'bangunan' && a.nomerPBG?.toLowerCase() === nomerPBG.toLowerCase() && a.id !== editingAsset?.id);
+        if (existsPBG) {
+          alert('Nomor PBG sudah terdaftar. Data tidak boleh ganda.');
+          return;
+        }
+      }
+    }
 
     let assetData: Asset;
     const generatedId = editingAsset ? editingAsset.id : `ast-${Date.now()}-${Math.floor(Math.random() * 1000)}`;

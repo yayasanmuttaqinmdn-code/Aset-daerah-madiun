@@ -181,6 +181,25 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
 
   const handleCompleteProcess = (asset: Asset, finalCertNo: string) => {
     if (userRole !== 'admin') return;
+    
+    // Duplicate check for new cert number
+    if (asset.type === 'tanah') {
+      if (assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase() === finalCertNo.toLowerCase() && a.id !== asset.id)) {
+        alert('Nomor Sertifikat sudah terdaftar. Data tidak boleh ganda.');
+        return;
+      }
+    } else if (asset.type === 'kendaraan') {
+      if (assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase() === finalCertNo.toLowerCase() && a.id !== asset.id)) {
+        alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
+        return;
+      }
+    } else if (asset.type === 'bangunan') {
+      if (finalCertNo && finalCertNo !== '-' && assets.some(a => a.type === 'bangunan' && a.nomerPBG?.toLowerCase() === finalCertNo.toLowerCase() && a.id !== asset.id)) {
+        alert('Nomor PBG sudah terdaftar. Data tidak boleh ganda.');
+        return;
+      }
+    }
+
     const finalOwnerName = 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN';
     
     // Extract prior states for audit trail
