@@ -193,11 +193,6 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
         alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
-    } else if (asset.type === 'bangunan') {
-      if (finalCertNo && finalCertNo !== '-' && assets.some(a => a.type === 'bangunan' && a.nomerPBG?.toLowerCase() === finalCertNo.toLowerCase() && a.id !== asset.id)) {
-        alert('Nomor PBG sudah terdaftar. Data tidak boleh ganda.');
-        return;
-      }
     }
 
     const finalOwnerName = 'YAYASAN PONDOK PESANTREN MUTTAQIN JOSENAN MADIUN';

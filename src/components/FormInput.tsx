@@ -194,14 +194,6 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
         alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
-    } else if (activeType === 'bangunan') {
-      if (nomerPBG && nomerPBG !== '-') {
-        const existsPBG = assets.some(a => a.type === 'bangunan' && a.nomerPBG?.toLowerCase() === nomerPBG.toLowerCase() && a.id !== editingAsset?.id);
-        if (existsPBG) {
-          alert('Nomor PBG sudah terdaftar. Data tidak boleh ganda.');
-          return;
-        }
-      }
     }
 
     let assetData: Asset;
