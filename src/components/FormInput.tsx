@@ -183,14 +183,16 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
     e.preventDefault();
 
     if (activeType === 'tanah' && nomerSertifikat) {
-      const exists = assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase() === nomerSertifikat.toLowerCase() && a.id !== editingAsset?.id);
-      if (exists) {
+      const exists = assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase().trim() === nomerSertifikat.toLowerCase().trim() && a.id !== editingAsset?.id);
+      const isUnchanged = editingAsset?.type === 'tanah' && editingAsset.nomerSertifikat === nomerSertifikat;
+      if (exists && !isUnchanged) {
         alert('Nomor Hak / Sertifikat sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
     } else if (activeType === 'kendaraan' && nomorPolisi) {
-      const exists = assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase() === nomorPolisi.toLowerCase() && a.id !== editingAsset?.id);
-      if (exists) {
+      const exists = assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase().trim() === nomorPolisi.toLowerCase().trim() && a.id !== editingAsset?.id);
+      const isUnchanged = editingAsset?.type === 'kendaraan' && editingAsset.nomorPolisi === nomorPolisi;
+      if (exists && !isUnchanged) {
         alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
@@ -465,9 +467,8 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
               {/* Lokasi & Kecamatan */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs font-extrabold text-gray-700">Kecamatan (Madiun) <strong className="text-rose-500">*</strong></label>
+                  <label className="text-xs font-extrabold text-gray-700">Kecamatan (Madiun)</label>
                   <select
-                    required
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all focus:outline-none h-11"
                     value={tanahKecamatan}
                     onChange={(e) => setTanahKecamatan(e.target.value)}
@@ -686,9 +687,8 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
               {/* Lokasi & Kecamatan */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs font-extrabold text-gray-700">Kecamatan (Madiun) <strong className="text-rose-500">*</strong></label>
+                  <label className="text-xs font-extrabold text-gray-700">Kecamatan (Madiun)</label>
                   <select
-                    required
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all focus:outline-none h-11"
                     value={bangunanKecamatan}
                     onChange={(e) => setBangunanKecamatan(e.target.value)}

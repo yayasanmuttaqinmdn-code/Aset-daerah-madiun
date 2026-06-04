@@ -184,12 +184,12 @@ export default function BalikNamaPanel({ assets, onSaveAsset, userRole, onNaviga
     
     // Duplicate check for new cert number
     if (asset.type === 'tanah') {
-      if (assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase() === finalCertNo.toLowerCase() && a.id !== asset.id)) {
+      if (assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase().trim() === finalCertNo.toLowerCase().trim() && a.id !== asset.id)) {
         alert('Nomor Sertifikat sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
     } else if (asset.type === 'kendaraan') {
-      if (assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase() === finalCertNo.toLowerCase() && a.id !== asset.id)) {
+      if (assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase().trim() === finalCertNo.toLowerCase().trim() && a.id !== asset.id)) {
         alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
