@@ -20,6 +20,7 @@ import {
   KECAMATAN_MADIUN,
   DAERAH_LIST
 } from '../types';
+import { DESA_KELURAHAN_MADIUN } from '../data';
 
 interface FormInputProps {
   onSaveAsset: (asset: Asset) => void;
@@ -39,6 +40,7 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
   const [atasNamaSertifikat, setAtasNamaSertifikat] = useState('');
   const [tanahLokasi, setTanahLokasi] = useState('');
   const [tanahKecamatan, setTanahKecamatan] = useState('');
+  const [tanahDesa, setTanahDesa] = useState('');
   const [tanahPenggunaan, setTanahPenggunaan] = useState('');
   const [tempatSimpanBerkas, setTempatSimpanBerkas] = useState('');
   const [luasTanah, setLuasTanah] = useState<number | ''>('');
@@ -64,6 +66,7 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
   const [namaBangunan, setNamaBangunan] = useState('');
   const [bangunanLokasi, setBangunanLokasi] = useState('');
   const [bangunanKecamatan, setBangunanKecamatan] = useState('');
+  const [bangunanDesa, setBangunanDesa] = useState('');
   const [luasBangunan, setLuasBangunan] = useState<number>(0);
   const [penggunaanBangunan, setPenggunaanBangunan] = useState('');
   const [nomerPBG, setNomerPBG] = useState('');
@@ -80,15 +83,27 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
         setNomerSertifikat(editingAsset.nomerSertifikat);
         setAtasNamaSertifikat(editingAsset.atasNamaSertifikat);
         
-        // Split subdistrict if possible
+        // Split subdistrict and village if possible
         const loc = editingAsset.lokasi;
         const matchingKec = KECAMATAN_MADIUN.find(k => loc.includes(k));
+        let remainingLoc = loc;
+
         if (matchingKec) {
           setTanahKecamatan(matchingKec);
-          setTanahLokasi(loc.replace(new RegExp(`\\s*Kec\\.\\s*${matchingKec}|\\s*${matchingKec}`, 'i'), '').trim());
+          remainingLoc = loc.replace(new RegExp(`\\s*Kec\\.\\s*${matchingKec}|\\s*${matchingKec}`, 'i'), '').replace(/(^,\s*)|(,\s*$)/g, '').trim();
         } else {
-          setTanahLokasi(loc);
           setTanahKecamatan('');
+        }
+
+        const villages = matchingKec ? DESA_KELURAHAN_MADIUN[matchingKec] : [];
+        const matchingVillage = villages?.find(v => remainingLoc.includes(v));
+        
+        if (matchingVillage) {
+          setTanahDesa(matchingVillage);
+          setTanahLokasi(remainingLoc.replace(new RegExp(`\\s*Ds/Kel\\.\\s*${matchingVillage}|\\s*${matchingVillage}`, 'i'), '').replace(/(^,\s*)|(,\s*$)/g, '').trim());
+        } else {
+          setTanahDesa('');
+          setTanahLokasi(remainingLoc);
         }
 
         setTanahPenggunaan(editingAsset.penggunaan);
@@ -119,15 +134,27 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
       } else if (editingAsset.type === 'bangunan') {
         setNamaBangunan(editingAsset.namaBangunan);
         
-        // Split subdistrict
+        // Split subdistrict and village
         const loc = editingAsset.lokasi;
         const matchingKec = KECAMATAN_MADIUN.find(k => loc.includes(k));
+        let remainingLoc = loc;
+
         if (matchingKec) {
           setBangunanKecamatan(matchingKec);
-          setBangunanLokasi(loc.replace(new RegExp(`\\s*Kec\\.\\s*${matchingKec}|\\s*${matchingKec}`, 'i'), '').trim());
+          remainingLoc = loc.replace(new RegExp(`\\s*Kec\\.\\s*${matchingKec}|\\s*${matchingKec}`, 'i'), '').replace(/(^,\s*)|(,\s*$)/g, '').trim();
         } else {
-          setBangunanLokasi(loc);
           setBangunanKecamatan('');
+        }
+
+        const villages = matchingKec ? DESA_KELURAHAN_MADIUN[matchingKec] : [];
+        const matchingVillage = villages?.find(v => remainingLoc.includes(v));
+
+        if (matchingVillage) {
+          setBangunanDesa(matchingVillage);
+          setBangunanLokasi(remainingLoc.replace(new RegExp(`\\s*Ds/Kel\\.\\s*${matchingVillage}|\\s*${matchingVillage}`, 'i'), '').replace(/(^,\s*)|(,\s*$)/g, '').trim());
+        } else {
+          setBangunanDesa('');
+          setBangunanLokasi(remainingLoc);
         }
 
         setLuasBangunan(editingAsset.luasBangunan);
@@ -152,6 +179,7 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
     setNomerSertifikat('');
     setAtasNamaSertifikat('');
     setTanahLokasi('');
+    setTanahDesa('');
     setTanahKecamatan('');
     setTanahPenggunaan('');
     setTempatSimpanBerkas('');
@@ -170,6 +198,7 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
     // Building resets
     setNamaBangunan('');
     setBangunanLokasi('');
+    setBangunanDesa('');
     setBangunanKecamatan('');
     setLuasBangunan(0);
     setPenggunaanBangunan('');
@@ -201,14 +230,15 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
     const originalCreatedAt = editingAsset ? editingAsset.createdAt : Date.now();
 
     if (activeType === 'tanah') {
-      if (!nomerSertifikat || !atasNamaSertifikat || !tanahLokasi) {
-        alert('Mohon isi semua data wajib (Nomor, Atas Nama, dan Lokasi).');
+      if (!nomerSertifikat || !atasNamaSertifikat) {
+        alert('Mohon isi semua data wajib (Nomor dan Atas Nama).');
         return;
       }
       
-      const fullLokasi = tanahKecamatan 
-        ? `${tanahLokasi}, Kec. ${tanahKecamatan}`
-        : tanahLokasi;
+      const dKel = tanahDesa ? `Ds/Kel. ${tanahDesa}, ` : '';
+      const dKec = tanahKecamatan ? `Kec. ${tanahKecamatan}` : '';
+      const baseLokasi = tanahLokasi ? `${tanahLokasi}, ` : '';
+      const fullLokasi = `${baseLokasi}${dKel}${dKec}`.replace(/(^,\s*)|(,\s*$)/g, '').trim();
 
       assetData = {
         id: generatedId,
@@ -260,14 +290,15 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
       };
     } else {
       // bangunan
-      if (!namaBangunan || !bangunanLokasi || !penggunaanBangunan) {
-        alert('Mohon isi semua data wajib (Nama Bangunan, Lokasi, dan Penggunaan).');
+      if (!namaBangunan || !penggunaanBangunan) {
+        alert('Mohon isi semua data wajib (Nama Bangunan dan Penggunaan).');
         return;
       }
 
-      const fullLokasi = bangunanKecamatan 
-        ? `${bangunanLokasi}, Kec. ${bangunanKecamatan}`
-        : bangunanLokasi;
+      const dKel = bangunanDesa ? `Ds/Kel. ${bangunanDesa}, ` : '';
+      const dKec = bangunanKecamatan ? `Kec. ${bangunanKecamatan}` : '';
+      const baseLokasi = bangunanLokasi ? `${bangunanLokasi}, ` : '';
+      const fullLokasi = `${baseLokasi}${dKel}${dKec}`.replace(/(^,\s*)|(,\s*$)/g, '').trim();
 
       assetData = {
         id: generatedId,
@@ -462,32 +493,43 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
                 />
               </div>
 
-              {/* Lokasi & Kecamatan */}
+              {/* Lokasi, Kecamatan, Desa */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs font-extrabold text-gray-700">Kecamatan (Madiun)</label>
-                  <select
+                  <label className="text-xs font-extrabold text-gray-700">Kecamatan</label>
+                  <input
+                    list="tanah-kecamatan-list"
+                    placeholder="Pilih atau ketik kecamatan..."
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all focus:outline-none h-11"
                     value={tanahKecamatan}
-                    onChange={(e) => setTanahKecamatan(e.target.value)}
-                  >
-                    <option value="">-- Pilih Kecamatan --</option>
+                    onChange={(e) => {
+                      setTanahKecamatan(e.target.value);
+                      if (DESA_KELURAHAN_MADIUN[e.target.value]) {
+                        setTanahDesa('');
+                      }
+                    }}
+                  />
+                  <datalist id="tanah-kecamatan-list">
                     {KECAMATAN_MADIUN.map(k => (
-                      <option key={k} value={k}>{k}</option>
+                      <option key={k} value={k} />
                     ))}
-                  </select>
+                  </datalist>
                 </div>
 
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs font-extrabold text-gray-700">Alamat / Detail Lokasi <strong className="text-rose-500">*</strong></label>
+                  <label className="text-xs font-extrabold text-gray-700">Desa / Kelurahan</label>
                   <input
-                    type="text"
-                    required
-                    placeholder="Nama jalan, RT/RW, Dusun"
+                    list="tanah-desa-list"
+                    placeholder="Pilih atau ketik desa..."
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all focus:outline-none h-11"
-                    value={tanahLokasi}
-                    onChange={(e) => setTanahLokasi(e.target.value)}
+                    value={tanahDesa}
+                    onChange={(e) => setTanahDesa(e.target.value)}
                   />
+                  <datalist id="tanah-desa-list">
+                    {tanahKecamatan && DESA_KELURAHAN_MADIUN[tanahKecamatan] && DESA_KELURAHAN_MADIUN[tanahKecamatan].map(d => (
+                      <option key={d} value={d} />
+                    ))}
+                  </datalist>
                 </div>
               </div>
 
@@ -682,32 +724,43 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
                 />
               </div>
 
-              {/* Lokasi & Kecamatan */}
+              {/* Lokasi, Kecamatan, Desa */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs font-extrabold text-gray-700">Kecamatan (Madiun)</label>
-                  <select
+                  <label className="text-xs font-extrabold text-gray-700">Kecamatan</label>
+                  <input
+                    list="bangunan-kecamatan-list"
+                    placeholder="Pilih atau ketik kecamatan..."
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all focus:outline-none h-11"
                     value={bangunanKecamatan}
-                    onChange={(e) => setBangunanKecamatan(e.target.value)}
-                  >
-                    <option value="">-- Pilih Kecamatan --</option>
+                    onChange={(e) => {
+                      setBangunanKecamatan(e.target.value);
+                      if (DESA_KELURAHAN_MADIUN[e.target.value]) {
+                        setBangunanDesa('');
+                      }
+                    }}
+                  />
+                  <datalist id="bangunan-kecamatan-list">
                     {KECAMATAN_MADIUN.map(k => (
-                      <option key={k} value={k}>{k}</option>
+                      <option key={k} value={k} />
                     ))}
-                  </select>
+                  </datalist>
                 </div>
 
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs font-extrabold text-gray-700">Alamat Lengkap <strong className="text-rose-500">*</strong></label>
+                  <label className="text-xs font-extrabold text-gray-700">Desa / Kelurahan</label>
                   <input
-                    type="text"
-                    required
-                    placeholder="Jalan, RT/RW, Dusun"
+                    list="bangunan-desa-list"
+                    placeholder="Pilih atau ketik desa..."
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all focus:outline-none h-11"
-                    value={bangunanLokasi}
-                    onChange={(e) => setBangunanLokasi(e.target.value)}
+                    value={bangunanDesa}
+                    onChange={(e) => setBangunanDesa(e.target.value)}
                   />
+                  <datalist id="bangunan-desa-list">
+                    {bangunanKecamatan && DESA_KELURAHAN_MADIUN[bangunanKecamatan] && DESA_KELURAHAN_MADIUN[bangunanKecamatan].map(d => (
+                      <option key={d} value={d} />
+                    ))}
+                  </datalist>
                 </div>
               </div>
 
