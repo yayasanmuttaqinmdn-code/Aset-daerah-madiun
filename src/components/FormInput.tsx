@@ -184,15 +184,13 @@ export default function FormInput({ onSaveAsset, editingAsset, onCancelEdit, use
 
     if (activeType === 'tanah' && nomerSertifikat) {
       const exists = assets.some(a => a.type === 'tanah' && a.nomerSertifikat?.toLowerCase().trim() === nomerSertifikat.toLowerCase().trim() && a.id !== editingAsset?.id);
-      const isUnchanged = editingAsset?.type === 'tanah' && editingAsset.nomerSertifikat === nomerSertifikat;
-      if (exists && !isUnchanged) {
+      if (exists) {
         alert('Nomor Hak / Sertifikat sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
     } else if (activeType === 'kendaraan' && nomorPolisi) {
       const exists = assets.some(a => a.type === 'kendaraan' && a.nomorPolisi?.toLowerCase().trim() === nomorPolisi.toLowerCase().trim() && a.id !== editingAsset?.id);
-      const isUnchanged = editingAsset?.type === 'kendaraan' && editingAsset.nomorPolisi === nomorPolisi;
-      if (exists && !isUnchanged) {
+      if (exists) {
         alert('Nomor Polisi sudah terdaftar. Data tidak boleh ganda.');
         return;
       }
